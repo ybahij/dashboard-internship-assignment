@@ -44,6 +44,8 @@
 //   );
 // }
 
+"use client";
+
 import React, { useState, useEffect } from 'react';
 import { User, MapPin, Phone, Mail, Layout, LogOut, ShieldAlert, ChevronRight, Building2, Users } from 'lucide-react';
 
