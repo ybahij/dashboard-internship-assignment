@@ -5,7 +5,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATA_view_count_limit_PRISMA_DATABASE_URL")
 }
 
 model UserViewLimit {
