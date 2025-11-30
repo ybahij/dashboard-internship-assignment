@@ -61,7 +61,7 @@ interface ContactPageProps {
 
 export default async function AgencyContactsPage({ params }: ContactPageProps) {
   // 1. Check Authentication
-  const { userId } = auth();
+  const { userId } = await auth();
   if (!userId) {
       redirect("/sign-in"); 
   }
