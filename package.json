@@ -4,29 +4,26 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma db push --accept-data-loss && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "next lint",
-    "postinstall": "prisma generate"
+    "lint": "next lint"
   },
   "dependencies": {
-    "@clerk/nextjs": "6.7.3",
-    "@prisma/client": "5.22.0",
-    "next": "15.0.3",
-    "react": "18.3.1",
-    "react-dom": "18.3.1",
-    "csv-parser": "3.0.0",
-    "lucide-react": "0.454.0"
+    "@clerk/nextjs": "6.35.5",
+    "next": "16.0.5",
+    "react": "19.2.0",
+    "react-dom": "19.2.0",
+    "csv-parse": "^5.5.6",
+    "lucide-react": "^0.555.0"
   },
   "devDependencies": {
-    "@types/node": "22.9.1",
-    "@types/react": "18.3.12",
-    "@types/react-dom": "18.3.1",
-    "prisma": "5.22.0",
-    "typescript": "5.6.3",
-    "tailwindcss": "3.4.14",
-    "postcss": "8.4.47",
-    "autoprefixer": "10.4.20"
+    "@types/node": "^20",
+    "@types/react": "^19",
+    "@types/react-dom": "^19",
+    "typescript": "^5",
+    "tailwindcss": "^4",
+    "postcss": "^8",
+    "autoprefixer": "^10"
   }
 
 }
