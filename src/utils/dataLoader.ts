@@ -31,7 +31,7 @@ interface AgencyRow {
   updated_at: string;
 }
 
-interface ContactRow {
+export interface ContactRow {
   id: string;
   first_name: string;
   last_name: string;
