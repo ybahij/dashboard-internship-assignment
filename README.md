@@ -43,26 +43,32 @@ graph TD
     DetailPage -->|Increment Count| UserDB[User View Limit Storage]
     DetailPage -->|Render| ContactTable[Contacts Table]
 ```
-📦 How to Run Locally
-Clone the repository
+## 📦 How to Run Locally
 
-Bash
+**1. Clone the repository**
+```bash
+git clone [https://github.com/ybahij/dashboard-internship-assignment](https://github.com/ybahij/dashboard-internship-assignment)
+cd dashboard-internship-assignment
+```
 
-git clone [https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git](https://github.com/YOUR_USERNAME/YOUR_REPO_NAME.git)
-cd YOUR_REPO_NAME
-Install dependencies
-
-Bash
-
+**2. Install dependencies**
+```bash
 npm install
-Set up Environment Variables Create a .env.local file and add your Clerk keys:
+```
 
-Bash
-
+**3. Set up Environment Variables**
+Create a `.env.local` file in the root directory and add your Clerk keys:
+```bash
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
-Run the development server
+```
 
-Bash
-
+**4. Run the development server**
+```bash
 npm run dev
+```
+
+Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+
+---
+*Built for the Full Stack Internship Assignment.*
