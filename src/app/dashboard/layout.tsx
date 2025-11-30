@@ -1,5 +1,5 @@
-
-import { UserButton, auth, currentUser } from '@clerk/nextjs';
+import { UserButton } from '@clerk/nextjs';
+import { auth, currentUser } from '@clerk/nextjs/server';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ReactNode } from 'react';
@@ -10,7 +10,7 @@ export default async function DashboardLayout({
 }: {
   children: ReactNode;
 }) {
-  const { userId } = auth();
+  const { userId } = await auth(); // ← Add await!
 
   if (!userId) {
     redirect('/sign-in');

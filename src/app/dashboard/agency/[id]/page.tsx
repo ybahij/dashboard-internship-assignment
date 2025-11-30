@@ -1,6 +1,6 @@
-import { auth } from '@clerk/nextjs';
+import { auth } from '@clerk/nextjs/server';
 import { redirect, notFound } from 'next/navigation';
-import { loadAndMergeData } from '../../../../utils/dataLoader'; // Your existing function
+import { loadAndMergeData } from '@/lib/csv-loader';
 import { checkViewLimit, incrementViewCount } from '@/lib/viewLimit';
 import Link from 'next/link';
 
@@ -9,14 +9,12 @@ export default async function AgencyContactsPage({
 }: {
   params: { id: string };
 }) {
-  // Get authenticated user
-  const { userId } = auth();
+  const { userId } = await auth(); // ← Add await!
 
   if (!userId) {
     redirect('/sign-in');
   }
 
-  // Check view limit BEFORE loading data
   const viewLimit = await checkViewLimit(userId);
 
   if (!viewLimit.canView) {
@@ -41,7 +39,6 @@ export default async function AgencyContactsPage({
     );
   }
 
-  // Load agency data
   const agencies = await loadAndMergeData();
   const agency = agencies.find((a) => a.id === params.id);
 
@@ -49,19 +46,16 @@ export default async function AgencyContactsPage({
     notFound();
   }
 
-  // Increment view count (user is viewing contacts)
   await incrementViewCount(userId);
 
   return (
     <div className="max-w-7xl mx-auto">
-      {/* View count indicator */}
       <div className="mb-6 p-4 bg-blue-50 border border-blue-200 rounded-lg">
         <p className="text-sm text-blue-800">
           Views remaining today: <strong>{viewLimit.remaining - 1}</strong> / {viewLimit.limit}
         </p>
       </div>
 
-      {/* Agency Details */}
       <div className="bg-white p-6 rounded-lg shadow mb-6">
         <h1 className="text-3xl font-bold mb-4">{agency.name}</h1>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4 text-gray-700">
@@ -86,7 +80,6 @@ export default async function AgencyContactsPage({
         )}
       </div>
 
-      {/* Contacts Table */}
       <div className="bg-white rounded-lg shadow overflow-hidden">
         <div className="px-6 py-4 bg-gray-50 border-b">
           <h2 className="text-2xl font-bold">
@@ -103,21 +96,11 @@ export default async function AgencyContactsPage({
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Name
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Email
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Phone
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Title
-                  </th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
-                    Department
-                  </th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Name</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Email</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Phone</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Title</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Department</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -153,10 +136,7 @@ export default async function AgencyContactsPage({
       </div>
 
       <div className="mt-6">
-        <Link
-          href="/dashboard"
-          className="text-blue-600 hover:underline"
-        >
+        <Link href="/dashboard" className="text-blue-600 hover:underline">
           ← Back to All Agencies
         </Link>
       </div>
