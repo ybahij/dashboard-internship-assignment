@@ -96,7 +96,6 @@ export default function DashboardLayout({
 
   const navItems = [
     { href: '/dashboard/agencies', label: 'Agencies', icon: Building2 },
-    { href: '/dashboard/contacts', label: 'Contacts', icon: Users },
   ];
 
   return (
