@@ -1,3 +1,4 @@
+"use client";
 import { UserButton, auth, currentUser } from '@clerk/nextjs';
 import { redirect } from 'next/navigation';
 import Link from 'next/link';
