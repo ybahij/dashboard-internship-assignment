@@ -47,7 +47,7 @@ graph TD
 
 **1. Clone the repository**
 ```bash
-git clone [https://github.com/ybahij/dashboard-internship-assignment](https://github.com/ybahij/dashboard-internship-assignment)
+git clone https://github.com/ybahij/dashboard-internship-assignment.git
 cd dashboard-internship-assignment
 ```
 
