@@ -4,6 +4,7 @@ import { redirect } from 'next/navigation';
 import Link from 'next/link';
 import { ReactNode } from 'react';
 import { getViewStats } from '@/lib/viewLimit';
+import "./globals.css";
 
 export default async function DashboardLayout({
   children,
