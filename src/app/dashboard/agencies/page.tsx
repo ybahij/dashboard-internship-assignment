@@ -110,7 +110,7 @@
 
 
 import Link from 'next/link';
-import { loadAndMergeData, MergedAgencyData } from '../../../utils/dataLoader.js';
+import { loadAndMergeData, MergedAgencyData } from '../../../utils/dataLoader';
 
 export default async function AgenciesPage() {
   const agencies: MergedAgencyData[] = await loadAndMergeData();

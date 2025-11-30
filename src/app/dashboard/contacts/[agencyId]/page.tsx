@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { loadAndMergeData, MergedAgencyData } from '../../../../utils/dataLoader.js';
+import { loadAndMergeData, MergedAgencyData } from '../../../../utils/dataLoader';
 // You will import auth here later to implement the view limit:
 // import { auth } from "@clerk/nextjs/server";
 
