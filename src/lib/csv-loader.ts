@@ -12,22 +12,11 @@ interface AgencyRow {
   state: string;
   state_code: string;
   type: string;
-  population: string;
   website: string;
   total_schools: string;
   total_students: string;
-  mailing_address: string;
-  grade_span: string;
-  locale: string;
-  csa_cbsa: string;
-  domain_name: string;
-  physical_address: string;
-  phone: string;
-  status: string;
-  student_teacher_ratio: string;
   county: string;
-  created_at: string;
-  updated_at: string;
+  [key: string]: any; // Allow loose indexing for debugging
 }
 
 export interface ContactRow {
@@ -37,13 +26,9 @@ export interface ContactRow {
   email: string;
   phone: string;
   title: string;
-  email_type: string;
-  contact_form_url: string;
-  created_at: string;
-  updated_at: string;
-  agency_id: string;
-  firm_id: string;
   department: string;
+  agency_id: string;
+  [key: string]: any; // Allow loose indexing for debugging
 }
 
 export interface MergedAgencyData extends AgencyRow {
@@ -54,7 +39,10 @@ function readCsv<T>(filePath: string): Promise<T[]> {
   return new Promise((resolve, reject) => {
     const results: T[] = [];
     fs.createReadStream(filePath)
-      .pipe(csv())
+      .pipe(csv({
+        // THIS FIXES THE ISSUE: Trims spaces from headers (e.g. "agency_id " -> "agency_id")
+        mapHeaders: ({ header }: { header: string }) => header.trim() 
+      }))
       .on('data', (data: T) => results.push(data))
       .on('end', () => resolve(results))
       .on('error', (error: Error) => reject(error));
@@ -66,10 +54,22 @@ export async function loadAndMergeData(): Promise<MergedAgencyData[]> {
     const agenciesRaw = await readCsv<AgencyRow>(AGENCIES_FILE);
     const employeesRaw = await readCsv<ContactRow>(EMPLOYEES_FILE);
 
+    // DEBUGGING: Print the keys of the first contact to check for typos
+    if (employeesRaw.length > 0) {
+      console.log("--- DEBUG CSV KEYS ---");
+      console.log("First Contact Keys:", Object.keys(employeesRaw[0]));
+      console.log("First Contact Data:", employeesRaw[0]);
+      console.log("Looking for 'agency_id'...");
+    }
+
     const employeesByAgencyId: Record<string, ContactRow[]> = {};
+    
     employeesRaw.forEach(employee => {
-      const agencyId = employee.agency_id;
+      // Ensure we trim whitespace from the ID value itself
+      const agencyId = employee.agency_id?.trim(); 
+      
       if (!agencyId) return;
+      
       if (!employeesByAgencyId[agencyId]) {
         employeesByAgencyId[agencyId] = [];
       }
