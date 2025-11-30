@@ -56,7 +56,6 @@ if (!viewLimit.canView) {
   console.log("agency contacts", agency.contacts);
 
   await incrementViewCount(userId);
-  revalidatePath('/dashboard');
 
   return (
     <div className="max-w-7xl mx-auto">
