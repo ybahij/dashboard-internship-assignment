@@ -1,10 +1,11 @@
-;
+
+"use server";
 import Link from 'next/link';
 import { notFound, redirect } from 'next/navigation';
 import { auth } from "@clerk/nextjs/server"; 
-import prisma from '../../../../lib/prisma';
+import prisma from '../../../../lib/prisma'; // Make sure you created this file
 import { loadAndMergeData } from '../../../../utils/dataLoader';
-import { ContactRow } from '../../../../utils/dataLoader';
+import { ContactRow } from '../../../../utils/dataLoader'; // Import ContactRow interface
 
 const DAILY_LIMIT = 50;
 
@@ -14,6 +15,7 @@ const DAILY_LIMIT = 50;
  * @returns The updated view status object.
  */
 async function getUserViewStatus(userId: string) {
+  // Use UTC to prevent timezone issues on Vercel servers
   const today = new Date();
   const startOfDayUTC = new Date(Date.UTC(today.getUTCFullYear(), today.getUTCMonth(), today.getUTCDate()));
 
@@ -24,6 +26,7 @@ async function getUserViewStatus(userId: string) {
   let currentCount = 0;
 
   if (!userLimitRecord || new Date(userLimitRecord.date) < startOfDayUTC) {
+    // New day or first visit: create/reset the record to 1 view
     userLimitRecord = await prisma.userViewLimit.upsert({
       where: { userId },
       update: { viewCount: 1, date: new Date() },
@@ -32,12 +35,13 @@ async function getUserViewStatus(userId: string) {
     currentCount = 1;
   } else {
     currentCount = userLimitRecord.viewCount;
+    // User is within the limit: increment the count in the database
     if (currentCount < DAILY_LIMIT) {
        await prisma.userViewLimit.update({
         where: { userId },
         data: { viewCount: { increment: 1 } },
       });
-      currentCount += 1;
+      currentCount += 1; // Reflect the incremented value locally
     }
   }
 
@@ -56,13 +60,16 @@ interface ContactPageProps {
 }
 
 export default async function AgencyContactsPage({ params }: ContactPageProps) {
-  const { userId } = await auth();
+  // 1. Check Authentication
+  const { userId } = auth();
   if (!userId) {
       redirect("/sign-in"); 
   }
 
+  // 2. Check and update the view limit using the database (The core logic)
   const viewStatus = await getUserViewStatus(userId);
   
+  // 3. Load the agency data using 'fs' on the server
   const allAgencies = await loadAndMergeData();
   const currentAgency = allAgencies.find(agency => agency.id === params.agencyId);
 
@@ -70,6 +77,7 @@ export default async function AgencyContactsPage({ params }: ContactPageProps) {
     notFound(); 
   }
 
+  // 4. Render the UI based on the database status
   return (
     <div className="container p-8">
       {/* Link back to the new /agencies root page */}
@@ -81,11 +89,13 @@ export default async function AgencyContactsPage({ params }: ContactPageProps) {
       <p className="mb-4">Views remaining today: {viewStatus.viewsRemaining}</p>
 
       {viewStatus.isLimitExceeded ? (
+        // RENDER THE UPGRADE PROMPT
         <div className="p-4 bg-red-100 border border-red-400 text-red-700 rounded-md">
           <h2>Daily Limit Exceeded</h2>
           <p>You have viewed your daily limit of 50 contacts. Please upgrade to view more.</p>
         </div>
       ) : (
+        // RENDER THE ACTUAL CONTACTS TABLE
         <table className="min-w-full">
           <thead>
             <tr>
