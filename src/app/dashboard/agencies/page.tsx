@@ -109,54 +109,44 @@
 // }
 
 
-import { MapPin } from 'lucide-react';
+import Link from 'next/link';
+import { loadAndMergeData, MergedAgencyData } from '../../../utils/dataLoader.js';
 
-// Static mock data for agencies
-const AGENCIES = Array.from({ length: 15 }, (_, i) => ({
-  id: `ag-${i}`,
-  city: ['New York', 'Los Angeles', 'Chicago', 'Houston', 'Phoenix', 'Philadelphia', 'San Antonio', 'San Diego', 'Dallas', 'San Jose', 'Austin', 'Jacksonville', 'Fort Worth', 'Columbus', 'Charlotte'][i],
-  address: `${Math.floor(Math.random() * 900) + 100} Market St`,
-  status: Math.random() > 0.2 ? 'Active' : 'Inactive'
-}));
+export default async function AgenciesPage() {
+  const agencies: MergedAgencyData[] = await loadAndMergeData();
 
-export default function AgenciesPage() {
   return (
-    <div className="space-y-6">
-      <h1 className="text-2xl font-bold text-slate-800">Partner Agencies</h1>
-      
-      <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
-        <table className="w-full text-left">
-          <thead className="bg-slate-50 border-b border-slate-200">
-            <tr>
-              <th className="px-6 py-4 font-semibold text-slate-600">City / Agency</th>
-              <th className="px-6 py-4 font-semibold text-slate-600">Address</th>
-              <th className="px-6 py-4 font-semibold text-slate-600">Status</th>
+    <div className="container">
+      <h1>Agencies Dashboard</h1>
+      <p>View all agencies and their associated contacts.</p>
+
+      <table>
+        <thead>
+          <tr>
+            <th>Name</th>
+            <th>State</th>
+            <th>Total Contacts</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {agencies.map((agency) => (
+            <tr key={agency.id}>
+              <td>{agency.name}</td>
+              <td>{agency.state_code}</td>
+              <td>{agency.contacts.length}</td>
+              <td>
+                {/* Link to the dynamic contact details page */}
+                <Link href={`/dashboard/contacts/${agency.id}`}>
+                  <button>
+                    View Contacts
+                  </button>
+                </Link>
+              </td>
             </tr>
-          </thead>
-          <tbody className="divide-y divide-slate-100">
-            {AGENCIES.map((agency) => (
-              <tr key={agency.id} className="hover:bg-slate-50">
-                <td className="px-6 py-4">
-                  <div className="flex items-center gap-3">
-                    <div className="w-8 h-8 rounded bg-blue-100 text-blue-600 flex items-center justify-center">
-                      <MapPin size={16} />
-                    </div>
-                    <span className="font-medium text-slate-900">{agency.city}</span>
-                  </div>
-                </td>
-                <td className="px-6 py-4 text-slate-500">{agency.address}</td>
-                <td className="px-6 py-4">
-                  <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                    agency.status === 'Active' ? 'bg-green-100 text-green-800' : 'bg-slate-100 text-slate-600'
-                  }`}>
-                    {agency.status}
-                  </span>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          ))}
+        </tbody>
+      </table>
     </div>
   );
 }

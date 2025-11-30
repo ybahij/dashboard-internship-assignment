@@ -1,0 +1,17 @@
+// prisma/schema.prisma
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATA_view_count_limit_PRISMA_DATABASE_URL")
+}
+
+model UserViewLimit {
+  id          String    @id @default(uuid())
+  userId      String    @unique // The unique ID from Clerk
+  viewCount   Int       @default(0)
+  date        DateTime  @default(now()) // The date the count started (for daily reset)
+  DAILY_LIMIT Int       @default(50) 
+}
