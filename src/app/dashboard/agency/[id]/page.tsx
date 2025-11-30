@@ -199,7 +199,7 @@ export default async function AgencyContactsPage({
     // This is what triggers the 404 page
     return notFound();
   }
-
+  console.log("agency contacts", agency.contacts);
   // Only increment if agency exists and user has limit
   await incrementViewCount(userId);
 
@@ -225,9 +225,9 @@ export default async function AgencyContactsPage({
             <p><span className="font-semibold text-gray-900">County:</span> {agency.county}</p>
           </div>
           <div className="space-y-2">
+            <p><span className="font-semibold text-gray-900">website:</span> {agency.website}</p>
             <p><span className="font-semibold text-gray-900">Total Students:</span> {agency.total_students?.toLocaleString()}</p>
             <p><span className="font-semibold text-gray-900">Total Schools:</span> {agency.total_schools?.toLocaleString()}</p>
-            <p><span className="font-semibold text-gray-900">Student/Teacher Ratio:</span> {agency.student_teacher_ratio}</p>
           </div>
         </div>
       </div>
