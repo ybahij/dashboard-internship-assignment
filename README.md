@@ -57,13 +57,32 @@ npm install
 ```
 
 **3. Set up Environment Variables**
-Create a `.env.local` file in the root directory and add your Clerk keys:
+Create a `.env.local` file in the root directory. You need keys for **Clerk** and a **PostgreSQL Database** (e.g., Vercel Postgres or local).
+
 ```bash
+# Clerk Authentication
 NEXT_PUBLIC_CLERK_PUBLISHABLE_KEY=pk_test_...
 CLERK_SECRET_KEY=sk_test_...
+
+# Clerk Settings
+NEXT_PUBLIC_CLERK_SIGN_IN_URL=/sign-in
+NEXT_PUBLIC_CLERK_SIGN_UP_URL=/sign-up
+NEXT_PUBLIC_CLERK_AFTER_SIGN_IN_URL=/dashboard
+NEXT_PUBLIC_CLERK_AFTER_SIGN_UP_URL=/dashboard
+
+# Database (Prisma)
+POSTGRES_PRISMA_URL="postgresql://..."
+POSTGRES_URL_NON_POOLING="postgresql://..."
 ```
 
-**4. Run the development server**
+**4. Setup Database**
+Generate the Prisma client and push the schema to your database:
+```bash
+npx prisma generate
+npx prisma db push
+```
+
+**5. Run the development server**
 ```bash
 npm run dev
 ```
