@@ -10,13 +10,11 @@ export async function checkViewLimit(userId: string) {
   const now = new Date();
   const startOfToday = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 
-  // Find or create user record
   let userLimit = await prisma.userViewLimit.findUnique({
     where: { userId },
   });
 
   if (!userLimit) {
-    // First time user - create record
     userLimit = await prisma.userViewLimit.create({
       data: {
         userId,
@@ -27,10 +25,8 @@ export async function checkViewLimit(userId: string) {
     });
   }
 
-  // Check if we need to reset the count (new day)
   const lastResetDate = new Date(userLimit.lastReset);
   if (lastResetDate < startOfToday) {
-    // New day - reset count
     userLimit = await prisma.userViewLimit.update({
       where: { userId },
       data: {
@@ -40,7 +36,6 @@ export async function checkViewLimit(userId: string) {
     });
   }
 
-  // Check if user has views remaining
   const canView = userLimit.viewCount < DAILY_LIMIT;
   const remaining = DAILY_LIMIT - userLimit.viewCount;
 

@@ -42,17 +42,14 @@ export interface ContactRow {
   contact_form_url: string;
   created_at: string;
   updated_at: string;
-  agency_id: string; // Key field for linking
+  agency_id: string;
   firm_id: string;
   department: string;
 }
 
-// Interface for the final merged data structure (Agency with nested contacts)
 export interface MergedAgencyData extends AgencyRow {
   contacts: ContactRow[];
 }
-
-// --- Generic CSV Reader Utility ---
 
 /**
  * Reads a CSV file from the filesystem and parses it into an array of typed objects.
@@ -65,7 +62,6 @@ function readCsv<T>(filePath: string): Promise<T[]> {
     const results: T[] = [];
     fs.createReadStream(filePath)
       .pipe(csv())
-      // FIX: Explicitly typing the 'data' parameter to resolve TS7006 error
       .on('data', (data: T) => results.push(data)) 
       .on('end', () => resolve(results))
       .on('error', (error: Error) => reject(error));
@@ -94,7 +90,7 @@ export async function loadAndMergeData(): Promise<MergedAgencyData[]> {
 
     const mergedData: MergedAgencyData[] = agenciesRaw.map(agency => ({
       ...agency,
-      contacts: employeesByAgencyId[agency.id] || [] // Attach contacts array
+      contacts: employeesByAgencyId[agency.id] || []
     }));
 
     return mergedData;

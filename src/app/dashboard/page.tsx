@@ -1,52 +1,39 @@
-// import { loadAndMergeData } from '../../utils/dataLoader';
-// import Link from 'next/link';
-
-// export default async function DashboardPage() {
-//   // Load data server-side
-//   const agencies = await loadAndMergeData();
-
-//   return (
-//     <div>
-//       <h1>All Agencies</h1>
-//       <table>
-//         <thead>
-//           <tr>
-//             <th>Name</th>
-//             <th>State</th>
-//             <th>Type</th>
-//             <th>Total Students</th>
-//             <th>Actions</th>
-//           </tr>
-//         </thead>
-//         <tbody>
-//           {agencies.map((agency) => (
-//             <tr key={agency.id}>
-//               <td>{agency.name}</td>
-//               <td>{agency.state}</td>
-//               <td>{agency.type}</td>
-//               <td>{agency.total_students}</td>
-//               <td>
-//                 <Link href={`/dashboard/agency/${agency.id}`}>
-//                   <button>View Contacts</button>
-//                 </Link>
-//               </td>
-//             </tr>
-//           ))}
-//         </tbody>
-//       </table>
-//     </div>
-//   );
-// }
-
 import { loadAndMergeData } from '../../utils/dataLoader';
 import Link from 'next/link';
+import { auth } from '@clerk/nextjs/server';
+import { getViewStats } from '@/lib/viewLimit';
+
+export const dynamic = 'force-dynamic'; 
 
 export default async function DashboardPage() {
-  // Load data server-side
-  const agencies = await loadAndMergeData();
+  const { userId } = await auth();
+  if (!userId) return null;
+
+  const [agencies, viewStats] = await Promise.all([
+    loadAndMergeData(),
+    getViewStats(userId)
+  ]);
 
   return (
     <div className="max-w-7xl mx-auto">
+      
+      {/* NEW: Stats Card at the top of the content */}
+      <div className="mb-8 grid grid-cols-1 md:grid-cols-3 gap-6">
+        <div className="bg-white p-6 rounded-xl shadow-sm border border-gray-200">
+           <h3 className="text-gray-500 text-sm font-medium uppercase tracking-wider mb-2">Daily Views Remaining</h3>
+           <div className="flex items-baseline gap-2">
+             <span className="text-4xl font-bold text-gray-900">{viewStats.remaining}</span>
+             <span className="text-gray-400">/ {viewStats.limit}</span>
+           </div>
+           <div className="w-full bg-gray-100 rounded-full h-2 mt-4">
+              <div
+                className={`h-2 rounded-full transition-all ${viewStats.remaining === 0 ? 'bg-red-500' : 'bg-blue-500'}`}
+                style={{ width: `${((viewStats.limit - viewStats.remaining) / viewStats.limit) * 100}%` }}
+              />
+           </div>
+        </div>
+      </div>
+
       {/* Header */}
       <div className="flex justify-between items-center mb-6">
         <h1 className="text-2xl font-bold text-gray-900">All Agencies</h1>
@@ -91,7 +78,7 @@ export default async function DashboardPage() {
                     </span>
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                    {agency.total_students.toLocaleString()}
+                    {agency.total_students ? parseInt(agency.total_students).toLocaleString() : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm font-medium">
                     <Link href={`/dashboard/agency/${agency.id}`}>
