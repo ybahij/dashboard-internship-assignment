@@ -1,6 +1,6 @@
 import { auth } from '@clerk/nextjs';
 import { redirect, notFound } from 'next/navigation';
-import { loadAndMergeData } from '@/lib/csv-loader'; // Your existing function
+import { loadAndMergeData } from '../../../../utils/dataLoader'; // Your existing function
 import { checkViewLimit, incrementViewCount } from '@/lib/viewLimit';
 import Link from 'next/link';
 
